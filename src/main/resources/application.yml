@@ -22,7 +22,7 @@ spring:
 
 logging:
   file:
-    name:
+    name: C:\Users\JINA\IdeaProjects\excelEdit\log\
   level:
     com:
       daily:
