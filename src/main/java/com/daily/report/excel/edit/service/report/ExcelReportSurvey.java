@@ -8,9 +8,7 @@ import com.daily.report.excel.edit.util.DateUtils;
 import com.daily.report.excel.edit.util.FileMakeUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
@@ -42,8 +40,8 @@ public class ExcelReportSurvey {
             // S1MPUSH
             FileMakeUtils.excelSheetMake(sheet,9,11,dto.getCpuUseAmt() + percent, cellContentsStyle);
             FileMakeUtils.excelSheetMake(sheet,10,11,dto.getMemUseAmt() + percent, cellContentsStyle);
-            FileMakeUtils.excelSheetMake(sheet,11,12,dto.getLogAmt()[0] + percent, cellContentsStyle);
-            FileMakeUtils.excelSheetMake(sheet,12,12,dto.getDataAmt()[0] + percent, cellContentsStyle);
+            FileMakeUtils.excelSheetMake(sheet,11,12,dto.getLogAmt().get(0) + percent, cellContentsStyle);
+            FileMakeUtils.excelSheetMake(sheet,12,12,dto.getDataAmt().get(0) + percent, cellContentsStyle);
 
             FileOutputStream outStream = new FileOutputStream(DateUtils.getFormatDate(String.valueOf(LocalDate.now()),
                     ExcelConstants.DATE_FORMAT_YYYYMMDD) + ExcelConstants.EXCEL_EDIT_UNDER_BAR + excelEditInfo.getDailyReportNm()
