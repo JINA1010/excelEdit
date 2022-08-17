@@ -8,7 +8,6 @@ import com.daily.report.excel.edit.service.report.ExcelReportSurvey;
 import com.daily.report.excel.edit.service.report.ExcelReportWebShell;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,7 +19,6 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -40,9 +38,8 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
+@ExtendWith(RestDocumentationExtension.class)
 @WebMvcTest(ExcelEditController.class)
-@Slf4j
 class ExcelEditControllerTests {
 
     MockMvc mvc;
@@ -78,8 +75,8 @@ class ExcelEditControllerTests {
     @Test
     @DisplayName("Report Excel 대량메일 테스트 - PUT /report/excel/edit/bulk-mail")
     void reportBulkMailTest() throws Exception {
-        List<Double> logList = new ArrayList<>();
-        logList.add(1.0);
+        List<Double> dataList = List.of(11.0);
+        List<Double> logList = List.of(10.0);
 
         //given
         ExcelEditDto excelEditDto = ExcelEditDto.builder()
@@ -88,8 +85,8 @@ class ExcelEditControllerTests {
                 .cdrvUseAmt(12.3)
                 .cdrvDiskAmt(23.4)
                 .ddrvDiskAmt(111)
+                .dataAmt(dataList)
                 .logAmt(logList)
-                .dataAmt(logList)
                 .build();
 
         String msg = "Success";
@@ -103,36 +100,42 @@ class ExcelEditControllerTests {
                         .accept(MediaType.APPLICATION_JSON)
                         .characterEncoding("UTF-8")
                         .content(getJsonStringByDto(excelEditDto)))
-                .andExpect(status().isOk())
-                .andDo(document("put-reportBulkMail",
+                .andDo(document("put-dailyReportBulkMail",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestFields(
-                                fieldWithPath("logAmt").type(JsonFieldType.NUMBER).description("log DISK 잔여량"),
-                                fieldWithPath("dataAmt").type(JsonFieldType.NUMBER).description("data DISK 잔여량")
+                                fieldWithPath("cpuUseAmt").type(JsonFieldType.NUMBER).description("CPU 사용률"),
+                                fieldWithPath("memUseAmt").type(JsonFieldType.NUMBER).description("Memory 사용률"),
+                                fieldWithPath("cdrvUseAmt").type(JsonFieldType.NUMBER).description("Disk(C) 사용률"),
+                                fieldWithPath("cdrvDiskAmt").type(JsonFieldType.NUMBER).description("DisK(C) 잔여량"),
+                                fieldWithPath("ddrvDiskAmt").type(JsonFieldType.NUMBER).description("Disk(D) 잔여량"),
+                                fieldWithPath("logAmt").type(JsonFieldType.ARRAY).description("log DISK 잔여량"),
+                                fieldWithPath("dataAmt").type(JsonFieldType.ARRAY).description("data DISK 잔여량")
+
                         ),
                         responseFields(
+                                fieldWithPath("updateMsg").type(JsonFieldType.STRING).description("결과 메세지"),
                                 fieldWithPath("excelEditDto.cpuUseAmt").type(JsonFieldType.NUMBER).description("CPU 사용률"),
                                 fieldWithPath("excelEditDto.memUseAmt").type(JsonFieldType.NUMBER).description("Memory 사용률"),
                                 fieldWithPath("excelEditDto.cdrvUseAmt").type(JsonFieldType.NUMBER).description("Disk(C) 사용률"),
                                 fieldWithPath("excelEditDto.cdrvDiskAmt").type(JsonFieldType.NUMBER).description("Disk(C) 잔여량"),
                                 fieldWithPath("excelEditDto.ddrvDiskAmt").type(JsonFieldType.NUMBER).description("Disk(D) 잔여량"),
-                                fieldWithPath("excelEditDto.logAmt[]").type(JsonFieldType.NUMBER).description("log DISK 잔여량"),
-                                fieldWithPath("excelEditDto.dataAmt[]").type(JsonFieldType.NUMBER).description("data DISK 잔여량")
+                                fieldWithPath("excelEditDto.logAmt[]").type(JsonFieldType.ARRAY).description("log DISK 잔여량"),
+                                fieldWithPath("excelEditDto.dataAmt[]").type(JsonFieldType.ARRAY).description("data DISK 잔여량")
                         )
                 ));
 
         //then
         actions
                 .andExpect(status().isOk())
-                //.andExpect(jsonPath("$.msg").value(msg))
+                .andExpect(jsonPath("$.updateMsg").value(msg))
                 .andExpect(jsonPath("$.excelEditDto.cpuUseAmt").value(excelEditDto.getCpuUseAmt()))
                 .andExpect(jsonPath("$.excelEditDto.memUseAmt").value(excelEditDto.getMemUseAmt()))
                 .andExpect(jsonPath("$.excelEditDto.cdrvUseAmt").value(excelEditDto.getCdrvUseAmt()))
                 .andExpect(jsonPath("$.excelEditDto.cdrvDiskAmt").value(excelEditDto.getCdrvDiskAmt()))
                 .andExpect(jsonPath("$.excelEditDto.ddrvDiskAmt").value(excelEditDto.getDdrvDiskAmt()))
-                .andExpect(jsonPath("$.excelEditDto.logAmt").value(excelEditDto.getLogAmt()))
-                .andExpect(jsonPath("$.excelEditDto.dataAmt").value(excelEditDto.getDataAmt()));
+                .andExpect(jsonPath("$.excelEditDto.logAmt[0]").value(excelEditDto.getLogAmt().get(0)))
+                .andExpect(jsonPath("$.excelEditDto.dataAmt[0]").value(excelEditDto.getDataAmt().get(0)));
     }
 
     @Test
@@ -150,7 +153,7 @@ class ExcelEditControllerTests {
                 .cdrvUseAmt(12.3)
                 .cdrvDiskAmt(23.4)
                 .ddrvDiskAmt(111)
-                .logAmt(Collections.singletonList(12.2))
+                .logAmt(dataList)
                 .dataAmt(dataList)
                 .build();
 
@@ -165,15 +168,11 @@ class ExcelEditControllerTests {
                         .accept(MediaType.APPLICATION_JSON)
                         .characterEncoding("UTF-8")
                         .content(getJsonStringByDto(excelEditDto)))
-                .andDo(document("put-dailyreportkixxexeledit",
+                .andDo(document("put-dailyReportKixx",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
-                        requestFields(
-                                fieldWithPath("logAmt").type(JsonFieldType.NUMBER).description("log DISK 잔여량"),
-                                fieldWithPath("dataAmt").type(JsonFieldType.NUMBER).description("data DISK 잔여량")
-                        ),
                         responseFields(
-                               // fieldWithPath("msg").type(JsonFieldType.STRING).description("결과 여부"),
+                                fieldWithPath("updateMsg").type(JsonFieldType.STRING).description("결과 메세지"),
                                 fieldWithPath("excelEditDto.cpuUseAmt").type(JsonFieldType.NUMBER).description("CPU 사용률"),
                                 fieldWithPath("excelEditDto.memUseAmt").type(JsonFieldType.NUMBER).description("Memory 사용률"),
                                 fieldWithPath("excelEditDto.cdrvUseAmt").type(JsonFieldType.NUMBER).description("Disk(C) 사용률"),
@@ -187,7 +186,7 @@ class ExcelEditControllerTests {
         //then
         actions
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.msg").value(msg))
+                .andExpect(jsonPath("$.updateMsg").value(msg))
                 .andExpect(jsonPath("$.excelEditDto.cpuUseAmt").value(excelEditDto.getCpuUseAmt()))
                 .andExpect(jsonPath("$.excelEditDto.memUseAmt").value(excelEditDto.getMemUseAmt()))
                 .andExpect(jsonPath("$.excelEditDto.cdrvUseAmt").value(excelEditDto.getCdrvUseAmt()))
@@ -199,7 +198,7 @@ class ExcelEditControllerTests {
 
     @Test
     @DisplayName("Report Excel 설문조사 테스트 - PUT /report/excel/edit/survey")
-    void reportSurveyTest() throws Exception {
+    public void reportSurveyTest() throws Exception {
         //given
         ExcelEditDto excelEditDto = ExcelEditDto.builder()
                 .cpuUseAmt(10.1)
@@ -207,8 +206,8 @@ class ExcelEditControllerTests {
                 .cdrvUseAmt(12.3)
                 .cdrvDiskAmt(23.4)
                 .ddrvDiskAmt(111)
-                .logAmt(Collections.singletonList(13.3))
-                .dataAmt(Collections.singletonList(14.0))
+                .logAmt(Collections.singletonList(11.3))
+                .dataAmt(Collections.singletonList(14.3))
                 .build();
 
         String msg = "Success";
@@ -222,43 +221,46 @@ class ExcelEditControllerTests {
                         .accept(MediaType.APPLICATION_JSON)
                         .characterEncoding("UTF-8")
                         .content(getJsonStringByDto(excelEditDto)))
-                .andDo(document("put-dailyreportsurveyexeledit",
+                .andDo(document("put-dailyReportSurvey",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
-                        requestFields(
+                       /* requestFields(
                                 fieldWithPath("cpuUseAmt").type(JsonFieldType.NUMBER).description("CPU 사용률"),
                                 fieldWithPath("memUserAmt").type(JsonFieldType.NUMBER).description("Memory 사용률"),
                                 fieldWithPath("logAmt").type(JsonFieldType.NUMBER).description("log DISK 잔여량"),
                                 fieldWithPath("dataAmt").type(JsonFieldType.NUMBER).description("data DISK 잔여량")
-                        ),
+                        ),*/
                         responseFields(
-                               // fieldWithPath("msg").type(JsonFieldType.STRING).description("결과 여부"),
+                                fieldWithPath("updateMsg").type(JsonFieldType.STRING).description("결과 메세지"),
                                 fieldWithPath("excelEditDto.cpuUseAmt").type(JsonFieldType.NUMBER).description("CPU 사용률"),
                                 fieldWithPath("excelEditDto.memUseAmt").type(JsonFieldType.NUMBER).description("Memory 사용률"),
                                 fieldWithPath("excelEditDto.cdrvUseAmt").type(JsonFieldType.NUMBER).description("Disk(C) 사용률"),
                                 fieldWithPath("excelEditDto.cdrvDiskAmt").type(JsonFieldType.NUMBER).description("Disk(C) 잔여량"),
                                 fieldWithPath("excelEditDto.ddrvDiskAmt").type(JsonFieldType.NUMBER).description("Disk(D) 잔여량"),
-                                fieldWithPath("excelEditDto.logAmt").type(JsonFieldType.ARRAY).description("log DISK 잔여량"),
-                                fieldWithPath("excelEditDto.dataAmt").type(JsonFieldType.ARRAY).description("data DISK 잔여량")
+                                fieldWithPath("excelEditDto.logAmt[]").type(JsonFieldType.ARRAY).description("log DISK 잔여량"),
+                                fieldWithPath("excelEditDto.dataAmt[]").type(JsonFieldType.ARRAY).description("data DISK 잔여량")
                         )
                 ));
 
         //then
         actions
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.msg").value(msg))
+                .andExpect(jsonPath("$.updateMsg").value(msg))
                 .andExpect(jsonPath("$.excelEditDto.cpuUseAmt").value(excelEditDto.getCpuUseAmt()))
                 .andExpect(jsonPath("$.excelEditDto.memUseAmt").value(excelEditDto.getMemUseAmt()))
                 .andExpect(jsonPath("$.excelEditDto.cdrvUseAmt").value(excelEditDto.getCdrvUseAmt()))
                 .andExpect(jsonPath("$.excelEditDto.cdrvDiskAmt").value(excelEditDto.getCdrvDiskAmt()))
                 .andExpect(jsonPath("$.excelEditDto.ddrvDiskAmt").value(excelEditDto.getDdrvDiskAmt()))
-                .andExpect(jsonPath("$.excelEditDto.logAmt").value(excelEditDto.getLogAmt()))
-                .andExpect(jsonPath("$.excelEditDto.dataAmt").value(excelEditDto.getDataAmt()));
+                .andExpect(jsonPath("$.excelEditDto.logAmt[0]").value(excelEditDto.getLogAmt().get(0)))
+                .andExpect(jsonPath("$.excelEditDto.dataAmt[0]").value(excelEditDto.getDataAmt().get(0)));
     }
 
     @Test
     @DisplayName("Report Excel Web Shell 테스트 - PUT /report/excel/edit/web-shell")
     void reportWebShellTest() throws Exception {
+        List<Double> logList = List.of(13.3);
+        List<Double> dataList = List.of(12.3);
+
         //given
         ExcelEditDto excelEditDto = ExcelEditDto.builder()
                 .cpuUseAmt(10.1)
@@ -266,8 +268,8 @@ class ExcelEditControllerTests {
                 .cdrvUseAmt(12.3)
                 .cdrvDiskAmt(23.4)
                 .ddrvDiskAmt(111)
-                .logAmt(Collections.singletonList(12.2))
-                .dataAmt(Collections.singletonList(12.2))
+                .logAmt(logList)
+                .dataAmt(dataList)
                 .build();
 
         String msg = "Success";
@@ -281,37 +283,40 @@ class ExcelEditControllerTests {
                         .accept(MediaType.APPLICATION_JSON)
                         .characterEncoding("UTF-8")
                         .content(getJsonStringByDto(excelEditDto)))
-                .andDo(document("put-dailyreportwebshellexeledit",
+                .andDo(document("put-dailyReportWebShell",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestFields(
                                 fieldWithPath("cpuUseAmt").type(JsonFieldType.NUMBER).description("CPU 사용률"),
-                                fieldWithPath("memUserAmt").type(JsonFieldType.NUMBER).description("Memory 사용률"),
+                                fieldWithPath("memUseAmt").type(JsonFieldType.NUMBER).description("Memory 사용률"),
+                                fieldWithPath("cdrvUseAmt").type(JsonFieldType.NUMBER).description("Disk(C) 사용률"),
+                                fieldWithPath("ddrvDiskAmt").type(JsonFieldType.NUMBER).description("Disk(D) 잔여량"),
+                                fieldWithPath("logAmt").type(JsonFieldType.ARRAY).description("log DISK 잔여량"),
+                                fieldWithPath("dataAmt").type(JsonFieldType.ARRAY).description("data DISK 잔여량"),
                                 fieldWithPath("cdrvDiskAmt").type(JsonFieldType.NUMBER).description("DisK(C) 잔여량")
                         ),
                         responseFields(
-                               // fieldWithPath("msg").type(JsonFieldType.STRING).description("결과 여부"),
+                                fieldWithPath("updateMsg").type(JsonFieldType.STRING).description("결과 메시지"),
                                 fieldWithPath("excelEditDto.cpuUseAmt").type(JsonFieldType.NUMBER).description("CPU 사용률"),
                                 fieldWithPath("excelEditDto.memUseAmt").type(JsonFieldType.NUMBER).description("Memory 사용률"),
                                 fieldWithPath("excelEditDto.cdrvUseAmt").type(JsonFieldType.NUMBER).description("Disk(C) 사용률"),
                                 fieldWithPath("excelEditDto.cdrvDiskAmt").type(JsonFieldType.NUMBER).description("Disk(C) 잔여량"),
                                 fieldWithPath("excelEditDto.ddrvDiskAmt").type(JsonFieldType.NUMBER).description("Disk(D) 잔여량"),
-                                fieldWithPath("excelEditDto.logAmt").type(JsonFieldType.ARRAY).description("log DISK 잔여량"),
-                                fieldWithPath("excelEditDto.dataAmt").type(JsonFieldType.ARRAY).description("data DISK 잔여량")
+                                fieldWithPath("excelEditDto.logAmt[]").type(JsonFieldType.ARRAY).description("log DISK 잔여량"),
+                                fieldWithPath("excelEditDto.dataAmt[]").type(JsonFieldType.ARRAY).description("data DISK 잔여량")
                         )
                 ));
 
         //then
         actions
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.msg").value(msg))
+                .andExpect(jsonPath("$.updateMsg").value(msg))
                 .andExpect(jsonPath("$.excelEditDto.cpuUseAmt").value(excelEditDto.getCpuUseAmt()))
                 .andExpect(jsonPath("$.excelEditDto.memUseAmt").value(excelEditDto.getMemUseAmt()))
                 .andExpect(jsonPath("$.excelEditDto.cdrvUseAmt").value(excelEditDto.getCdrvUseAmt()))
                 .andExpect(jsonPath("$.excelEditDto.cdrvDiskAmt").value(excelEditDto.getCdrvDiskAmt()))
                 .andExpect(jsonPath("$.excelEditDto.ddrvDiskAmt").value(excelEditDto.getDdrvDiskAmt()))
-                .andExpect(jsonPath("$.excelEditDto.logAmt").value(excelEditDto.getLogAmt()))
-                .andExpect(jsonPath("$.excelEditDto.dataAmt").value(excelEditDto.getDataAmt()));
+                .andExpect(jsonPath("$.excelEditDto.logAmt[0]").value(excelEditDto.getLogAmt().get(0)))
+                .andExpect(jsonPath("$.excelEditDto.dataAmt[0]").value(excelEditDto.getDataAmt().get(0)));
     }
-
 }

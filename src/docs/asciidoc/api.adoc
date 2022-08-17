@@ -1,0 +1,49 @@
+ifndef::snippets[]
+:snippets: ./build/generated-snippets
+endif::[]
+= Daily Check Report Api
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+:sectlinks:
+
+[[introduction]]
+== 소개
+Daily Check Api 문서
+
+[[Domain]]
+== Domain
+https://localhost:8080
+
+[[MixUpdateStats]]
+== 일일점검 API
+=== 대량메일 일일점검
+==== Request
+include::{snippets}/put-dailyReportBulkMail/http-request.adoc[]
+include::{snippets}/put-dailyReportBulkMail/request-fields.adoc[]
+==== Response
+include::{snippets}/put-dailyReportBulkMail/http-response.adoc[]
+include::{snippets}/put-dailyReportBulkMail/response-fields.adoc[]
+
+=== KIXX 일일점검
+==== Request
+include::{snippets}/put-dailyReportKixx/http-request.adoc[]
+==== Response
+include::{snippets}/put-dailyReportKixx/http-response.adoc[]
+include::{snippets}/put-dailyReportKixx/response-fields.adoc[]
+
+=== 설문조사 일일점검
+==== Request
+include::{snippets}/put-dailyReportSurvey/http-request.adoc[]
+==== Response
+include::{snippets}/put-dailyReportSurvey/http-response.adoc[]
+
+=== 웹쉘 일일점검
+==== Request
+include::{snippets}/put-dailyReportWebShell/http-request.adoc[]
+include::{snippets}/put-dailyReportWebShell/request-fields.adoc[]
+==== Response
+include::{snippets}/put-dailyReportWebShell/http-response.adoc[]
+include::{snippets}/put-dailyReportWebShell/response-fields.adoc[]
