@@ -28,8 +28,8 @@ public class ExcelReportSurvey {
         String editMsg;
         String percent = ExcelConstants.EXCEL_EDIT_PERCENT;
         ExcelEditInfo excelEditInfo = ExcelEditInfo.findByExcelEditPath(ExcelConstants.EXCEL_EDIT_SURVEY);
-        String fileLocation = FileMakeUtils.getFilePath(excelEditInfo.getDailyReportNm(),
-                ExcelConstants.EXCEL_EDIT_DEPT + ExcelConstants.EXCEL_XLSX_TYPE);
+        String fileLocation = FileMakeUtils.getFilePath(excelEditInfo.getDailyReportPath(),
+                                                        excelEditInfo.getDailyReportType());
 
         try {
             XSSFWorkbook workbook = new XSSFWorkbook(new FileInputStream(fileLocation));
@@ -40,12 +40,14 @@ public class ExcelReportSurvey {
             // S1MPUSH
             FileMakeUtils.excelSheetMake(sheet,9,11,dto.getCpuUseAmt() + percent, cellContentsStyle);
             FileMakeUtils.excelSheetMake(sheet,10,11,dto.getMemUseAmt() + percent, cellContentsStyle);
-            FileMakeUtils.excelSheetMake(sheet,11,12,dto.getLogAmt().get(0) + percent, cellContentsStyle);
-            FileMakeUtils.excelSheetMake(sheet,12,12,dto.getDataAmt().get(0) + percent, cellContentsStyle);
+            FileMakeUtils.excelSheetMake(sheet,11,12, String.valueOf(dto.getLogAmt().get(0)), cellContentsStyle);
+            FileMakeUtils.excelSheetMake(sheet,12,12, String.valueOf(dto.getDataAmt().get(0)), cellContentsStyle);
 
-            FileOutputStream outStream = new FileOutputStream(DateUtils.getFormatDate(String.valueOf(LocalDate.now()),
-                    ExcelConstants.DATE_FORMAT_YYYYMMDD) + ExcelConstants.EXCEL_EDIT_UNDER_BAR + excelEditInfo.getDailyReportNm()
-                    + ExcelConstants.EXCEL_EDIT_DEPT + ExcelConstants.EXCEL_XLSX_TYPE);
+            FileOutputStream outStream = new FileOutputStream(
+                DateUtils.getFormatDate(String.valueOf(LocalDate.now()), ExcelConstants.DATE_FORMAT_YYYYMMDD) +
+                      ExcelConstants.EXCEL_EDIT_UNDER_BAR + ExcelConstants.EXCEL_EDIT_NM +
+                      ExcelConstants.EXCEL_EDIT_UNDER_BAR + excelEditInfo.getDailyReportNm() +
+                      excelEditInfo.getDailyReportType());
 
             workbook.write(outStream);
             outStream.close();

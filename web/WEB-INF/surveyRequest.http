@@ -1,0 +1,9 @@
+PUT http://localhost:8080/report/excel/edit/survey
+Content-Type: application/json
+
+{
+  "cpuUseAmt": 7.5,
+  "memUseAmt": 24.3,
+  "logAmt": [40.9],
+  "dataAmt": [19.1]
+}

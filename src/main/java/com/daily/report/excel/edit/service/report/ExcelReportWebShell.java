@@ -28,8 +28,8 @@ public class ExcelReportWebShell {
         String editMsg;
         String percent = ExcelConstants.EXCEL_EDIT_PERCENT;
         ExcelEditInfo excelEditInfo = ExcelEditInfo.findByExcelEditPath(ExcelConstants.EXCEL_EDIT_WEB_SHELL);
-        String fileLocation = FileMakeUtils.getFilePath(excelEditInfo.getDailyReportNm(),
-                ExcelConstants.EXCEL_EDIT_DEPT + ExcelConstants.EXCEL_XLSX_TYPE);
+        String fileLocation = FileMakeUtils.getFilePath(excelEditInfo.getDailyReportPath(),
+                                                        excelEditInfo.getDailyReportType());
 
         try {
             XSSFWorkbook workbook = new XSSFWorkbook(new FileInputStream(fileLocation));
@@ -40,12 +40,14 @@ public class ExcelReportWebShell {
             // S1WEBSH
             FileMakeUtils.excelSheetMake(sheet,10,11,dto.getMemUseAmt() + percent, cellContentsStyle);
             FileMakeUtils.excelSheetMake(sheet,11,12,dto.getCdrvDiskAmt() + percent, cellContentsStyle);
-            FileMakeUtils.excelSheetMake(sheet,12,12,dto.getCdrvDiskAmt() + percent, cellContentsStyle);
+            FileMakeUtils.excelSheetMake(sheet,12,12, String.valueOf(dto.getCdrvDiskAmt()), cellContentsStyle);
 
 
-            FileOutputStream outStream = new FileOutputStream(DateUtils.getFormatDate(String.valueOf(LocalDate.now()),
-                    ExcelConstants.DATE_FORMAT_YYYYMMDD) + ExcelConstants.EXCEL_EDIT_UNDER_BAR + excelEditInfo.getDailyReportNm()
-                    + ExcelConstants.EXCEL_EDIT_DEPT + ExcelConstants.EXCEL_XLSX_TYPE);
+            FileOutputStream outStream = new FileOutputStream(
+                DateUtils.getFormatDate(String.valueOf(LocalDate.now()), ExcelConstants.DATE_FORMAT_YYYYMMDD) +
+                      ExcelConstants.EXCEL_EDIT_UNDER_BAR + ExcelConstants.EXCEL_EDIT_NM +
+                      ExcelConstants.EXCEL_EDIT_UNDER_BAR + excelEditInfo.getDailyReportNm() +
+                      excelEditInfo.getDailyReportType());
 
             workbook.write(outStream);
             outStream.close();

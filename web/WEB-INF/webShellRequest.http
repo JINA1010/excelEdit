@@ -1,0 +1,8 @@
+PUT http://localhost:8080/report/excel/edit/web-shell
+Content-Type: application/json
+
+{
+  "memUseAmt": 51.9,
+  "cdrvUseAmt": 0.4,
+  "cdrvDiskAmt": 217.5
+}

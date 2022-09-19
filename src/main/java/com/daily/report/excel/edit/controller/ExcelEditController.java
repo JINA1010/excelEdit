@@ -37,7 +37,7 @@ public class ExcelEditController {
         return ResponseEntity.ok(excelReportBulkMail.dailyReportBulkMailExelEdit(dto));
     }
 
-    @PutMapping(value = "/report/excel/edit/kiix")
+    @PutMapping(value = "/report/excel/edit/kixx")
     public ResponseEntity<ExcelEditResponseDto> dailyReportKixxExelEdit(@Valid @RequestBody ExcelEditDto dto) {
         return ResponseEntity.ok(excelReportKixx.dailyReportKixxExelEdit(dto));
     }

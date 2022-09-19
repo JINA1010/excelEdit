@@ -1,0 +1,29 @@
+PUT http://localhost:8080/report/excel/edit/kixx
+Content-Type: application/json
+
+{
+  "logAmt": [
+              28.9,
+              29.3,
+              29.3,
+              29.3,
+              27.2,
+              24.3,
+              22.5,
+              25,
+              53.7,
+              151
+            ],
+  "dataAmt": [
+              28.9,
+              29.3,
+              29.3,
+              29.3,
+              27.2,
+              24.3,
+              22.5,
+              25,
+              53.7,
+              151
+            ]
+}

@@ -1,0 +1,7 @@
+PUT http://localhost:8080/report/excel/edit/bulk-mail
+Content-Type: application/json
+
+{
+  "cdrvDiskAmt": 77.6,
+  "ddrvDiskAmt": 339.8
+}

@@ -30,9 +30,9 @@ public class ExcelReportBulkMail {
     public ExcelEditResponseDto dailyReportBulkMailExelEdit(ExcelEditDto dto) {
         String editMsg;
         String percent = ExcelConstants.EXCEL_EDIT_PERCENT;
-        ExcelEditInfo excelEditInfo = ExcelEditInfo.findByExcelEditPath(ExcelConstants.EXCEL_EDIT_BULI_MAIL);
-        String fileLocation = FileMakeUtils.getFilePath(excelEditInfo.getDailyReportNm(),
-                ExcelConstants.EXCEL_EDIT_DEPT + ExcelConstants.EXCEL_XLSX_TYPE);
+        ExcelEditInfo excelEditInfo = ExcelEditInfo.findByExcelEditPath(ExcelConstants.EXCEL_EDIT_BULK_MAIL);
+        String fileLocation = FileMakeUtils.getFilePath(excelEditInfo.getDailyReportPath(),
+                                                        excelEditInfo.getDailyReportType());
 
         try {
             XSSFWorkbook workbook = new XSSFWorkbook(new FileInputStream(fileLocation));
@@ -47,12 +47,14 @@ public class ExcelReportBulkMail {
             FileMakeUtils.excelSheetMake(sheet,10,11,excelPerformDataService.getExcelData(56,6) + percent, cellContentsStyle);
             FileMakeUtils.excelSheetMake(sheet,10,12,excelPerformDataService.getExcelData(56,8) + percent,cellContentsStyle);
             FileMakeUtils.excelSheetMake(sheet,10,13,excelPerformDataService.getExcelData(56,7) + percent, cellContentsStyle);
-            FileMakeUtils.excelSheetMake(sheet,11,14,dto.getCdrvDiskAmt() + percent, cellContentsStyle);
-            FileMakeUtils.excelSheetMake(sheet,12,14,dto.getDdrvDiskAmt() + percent, cellContentsStyle);
+            FileMakeUtils.excelSheetMake(sheet,11,14, String.valueOf(dto.getCdrvDiskAmt()), cellContentsStyle);
+            FileMakeUtils.excelSheetMake(sheet,12,14, String.valueOf(dto.getDdrvDiskAmt()), cellContentsStyle);
 
-            FileOutputStream outStream = new FileOutputStream(DateUtils.getFormatDate(String.valueOf(LocalDate.now()),
-                    ExcelConstants.DATE_FORMAT_YYYYMMDD) + ExcelConstants.EXCEL_EDIT_UNDER_BAR + excelEditInfo.getDailyReportNm()
-                    + ExcelConstants.EXCEL_EDIT_DEPT + ExcelConstants.EXCEL_XLSX_TYPE);
+            FileOutputStream outStream = new FileOutputStream(
+                DateUtils.getFormatDate(String.valueOf(LocalDate.now()), ExcelConstants.DATE_FORMAT_YYYYMMDD) +
+                      ExcelConstants.EXCEL_EDIT_UNDER_BAR + ExcelConstants.EXCEL_EDIT_NM +
+                      ExcelConstants.EXCEL_EDIT_UNDER_BAR + excelEditInfo.getDailyReportNm() +
+                      excelEditInfo.getDailyReportType());
 
             workbook.write(outStream);
             outStream.close();

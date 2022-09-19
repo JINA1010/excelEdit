@@ -21,7 +21,7 @@ public class ExcelPerformDataService {
         String value;
         ExcelEditInfo excelEditInfo = ExcelEditInfo.findByExcelEditPath(ExcelConstants.EXCEL_PERFORM_DATA);
         String fileLocation = FileMakeUtils.getFilePath(excelEditInfo.getDailyReportNm(),
-                                               ExcelConstants.EXCEL_EDIT_DEPT + ExcelConstants.EXCEL_XLSX_TYPE);
+                                                        excelEditInfo.getDailyReportType());
         try {
             FileInputStream file = new FileInputStream(fileLocation);
             XSSFWorkbook workbook = new XSSFWorkbook(file);

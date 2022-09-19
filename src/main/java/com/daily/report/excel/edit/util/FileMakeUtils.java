@@ -47,7 +47,7 @@ public class FileMakeUtils {
         cellContentsStyle.setBorderBottom(BorderStyle.THIN); //테두리 아래쪽
         cellContentsStyle.setBorderLeft(BorderStyle.THIN); //테두리 왼쪽
         cellContentsStyle.setBorderRight(BorderStyle.THIN); //테두리 오른쪽
-        cellContentsStyle.setFillForegroundColor(IndexedColors.LIGHT_TURQUOISE.getIndex());  // 배경색
+        cellContentsStyle.setFillForegroundColor(IndexedColors.PALE_BLUE.getIndex());  // 배경색
         cellContentsStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);	//채우기 적용
 
         cellContentsStyle.setFont(cellContentsFont);
