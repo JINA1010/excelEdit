@@ -2,9 +2,11 @@ package com.daily.report.excel.edit.service.report;
 
 import com.daily.report.excel.edit.constans.ExcelConstants;
 import com.daily.report.excel.edit.constans.ExcelEditInfo;
+import com.daily.report.excel.edit.core.jpa.entity.LoginEntity;
 import com.daily.report.excel.edit.dto.ExcelEditDto;
 import com.daily.report.excel.edit.dto.ExcelEditResponseDto;
 import com.daily.report.excel.edit.service.ExcelPerformDataService;
+import com.daily.report.excel.edit.service.LoginService;
 import com.daily.report.excel.edit.util.DateUtils;
 import com.daily.report.excel.edit.util.FileMakeUtils;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +27,7 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class ExcelReportKixx {
     private final ExcelPerformDataService excelPerformDataService;
+    private final LoginService loginService;
 
     @Transactional
     public ExcelEditResponseDto dailyReportKixxExelEdit(ExcelEditDto dto) {
@@ -145,6 +148,9 @@ public class ExcelReportKixx {
             for(int i=1; i<=7; i++) {
                 String date = DateUtils.getFormatDate(String.valueOf(LocalDate.now().minusDays(i)), ExcelConstants.DATE_FORMAT_YYYYMMDD3);
                 FileMakeUtils.excelSheetMake(sheet,cellCnt,10, date, cellContentsStyle);
+
+                LoginEntity loginEntity = loginService.findByLoginDt(date);
+
                 cellCnt--;
             }
 

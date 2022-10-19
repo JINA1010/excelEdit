@@ -25,6 +25,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.projectlombok:lombok:1.18.24'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
@@ -42,17 +43,24 @@ dependencies {
     implementation group: 'commons-math', name: 'commons-math', version: '1.2'
 
     // log4J update
-    implementation 'org.apache.logging.log4j:log4j-api:2.18.0'
-    implementation 'org.apache.logging.log4j:log4j-to-slf4j:2.18.0'
+    implementation 'org.apache.logging.log4j:log4j-api:2.19.0'
+    implementation 'org.apache.logging.log4j:log4j-to-slf4j:2.19.0'
 
     // javax validation
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
-    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
-
     //h2
     implementation 'com.h2database:h2'
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    implementation 'com.microsoft.sqlserver:mssql-jdbc'
+
+    //QueryDSL
+    implementation 'com.querydsl:querydsl-jpa:5.0.0'
+    annotationProcessor(
+            'javax.persistence:javax.persistence-api',
+            'javax.annotation:javax.annotation-api',
+            'com.querydsl:querydsl-apt:5.0.0:jpa'
+    )
 
     //Spring Rest Docs
     implementation 'org.springframework.restdocs:spring-restdocs-asciidoctor'
